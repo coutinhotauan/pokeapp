@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       pokeHub = PokeHub.fromJson(decodedJson);
     });
+
   }
 
   @override
@@ -48,53 +49,52 @@ class _HomePageState extends State<HomePage> {
       ),
       body: pokeHub == null
           ? const Center(
-              child: CircularProgressIndicator(),
-            )
+        child: CircularProgressIndicator(),
+      )
           : GridView.count(
-              crossAxisCount: 2,
-              children: pokeHub!.pokemon.map((poke) {
-
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PokeDetail(pokemon: poke)
-                        )
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Hero(
-                      tag: poke!.id ?? 999,
-                      child: Card(
-                        elevation: 3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: NetworkImage(poke.img ?? '')),
-                              ),
-                            ),
-                            Text(
-                              poke.name ?? '',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+        crossAxisCount: 2,
+        children: pokeHub!.pokemon.map((poke) {
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PokeDetail(pokemon: poke)
+                  )
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Hero(
+                tag: poke.id as Object,
+                child: Card(
+                  elevation: 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: NetworkImage(poke.img ?? '')),
                         ),
                       ),
-                    ),
+                      Text(
+                        poke.name ?? '',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              }).toList(),
+                ),
+              ),
             ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

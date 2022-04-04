@@ -6,6 +6,43 @@ class PokeDetail extends StatelessWidget {
 
   final Pokemon pokemon;
 
+  selectColor(String type){
+    switch(type){
+      case 'Grass':
+        return Colors.green;
+      case 'Poison':
+        return Colors.purple;
+      case 'Fire':
+        return Colors.red;
+      case 'Flying':
+        return Colors.teal.shade50;
+      case 'Water':
+        return Colors.blue;
+      case 'Bug':
+        return Colors.grey;
+      case 'Normal':
+        return Colors.white;
+      case 'Electric':
+        return Colors.yellow;
+      case 'Ground':
+        return Colors.brown;
+      case 'Fighting':
+        return Colors.deepPurpleAccent;
+      case 'Psychic':
+        return Colors.lightGreenAccent;
+      case 'Rock':
+        return Colors.black12;
+      case 'Ice':
+        return Colors.lightBlueAccent;
+      case 'Ghost':
+        return Colors.white70;
+      case 'Dragon':
+        return Colors.amber;
+    }
+
+    return Colors.transparent;
+  }
+
   bodyWidget(context) {
     return Stack(
       children: [
@@ -40,7 +77,7 @@ class PokeDetail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon.type!
                       .map((t) => FilterChip(
-                          backgroundColor: Colors.amber,
+                          backgroundColor: selectColor(t),
                           label: Text(t),
                           onSelected: (b) {}))
                       .toList(),
@@ -53,7 +90,7 @@ class PokeDetail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon.weaknesses!
                       .map((t) => FilterChip(
-                          backgroundColor: Colors.red,
+                          backgroundColor: selectColor(t),
                           label: Text(t),
                           onSelected: (b) {}))
                       .toList(),
@@ -66,7 +103,7 @@ class PokeDetail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon.nextEvolution!
                       .map((t) => FilterChip(
-                          backgroundColor: Colors.green,
+                          backgroundColor: selectColor(pokemon.type![0] ?? ''),
                           label: Text(t.name ?? ''),
                           onSelected: (b) {}))
                       .toList(),
@@ -78,7 +115,7 @@ class PokeDetail extends StatelessWidget {
         Align(
           alignment: Alignment.topCenter,
           child: Hero(
-            tag: pokemon.id ?? 999,
+            tag: pokemon.id as Object,
             child: Container(
               height: 200,
               width: 200,
