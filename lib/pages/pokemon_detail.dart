@@ -103,7 +103,7 @@ class PokeDetail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon.nextEvolution!
                       .map((t) => FilterChip(
-                          backgroundColor: selectColor(pokemon.type![0] ?? ''),
+                          backgroundColor: selectColor(pokemon.type![0]),
                           label: Text(t.name ?? ''),
                           onSelected: (b) {}))
                       .toList(),

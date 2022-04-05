@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokeapp/pages/pokemon_detail.dart';
@@ -38,15 +39,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Poke App"),
+        title: const Text("PokéApp"),
         backgroundColor: Colors.cyan,
+        actions: [
+          IconButton(onPressed: (){}, icon: const Icon(Icons.search)),
+        ],
       ),
       drawer: const Drawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.cyan,
-        child: const Icon(Icons.refresh),
-      ),
       body: pokeHub == null
           ? const Center(
         child: CircularProgressIndicator(),
