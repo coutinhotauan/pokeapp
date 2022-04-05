@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokeapp/pages/pokemon_detail.dart';
 import 'dart:convert';
@@ -55,12 +56,18 @@ class _HomePageState extends State<HomePage> {
         children: pokeHub!.pokemon.map((poke) {
           return InkWell(
             onTap: () {
+
+              /* FORMER IDEA (using Navigator)
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PokeDetail(pokemon: poke)
                   )
               );
+               */
+
+              //using Modular to navigate between pages
+              Modular.to.pushNamed('/pokedetail', arguments: poke);
             },
             child: Padding(
               padding: const EdgeInsets.all(2.0),

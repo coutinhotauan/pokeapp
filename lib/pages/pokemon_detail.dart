@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokeapp/pokemon.dart';
 
 class PokeDetail extends StatelessWidget {
@@ -6,8 +7,8 @@ class PokeDetail extends StatelessWidget {
 
   final Pokemon pokemon;
 
-  selectColor(String type){
-    switch(type){
+  selectColor(String type) {
+    switch (type) {
       case 'Grass':
         return Colors.green;
       case 'Poison':
@@ -95,19 +96,23 @@ class PokeDetail extends StatelessWidget {
                           onSelected: (b) {}))
                       .toList(),
                 ),
-                pokemon.nextEvolution != null ? const Text(
-                  'Next Evolution',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ) : const Text(''),
-                pokemon.nextEvolution != null ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: pokemon.nextEvolution!
-                      .map((t) => FilterChip(
-                          backgroundColor: selectColor(pokemon.type![0]),
-                          label: Text(t.name ?? ''),
-                          onSelected: (b) {}))
-                      .toList(),
-                ) : Container()
+                pokemon.nextEvolution != null
+                    ? const Text(
+                        'Next Evolution',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
+                    : const Text(''),
+                pokemon.nextEvolution != null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: pokemon.nextEvolution!
+                            .map((t) => FilterChip(
+                                backgroundColor: selectColor(pokemon.type![0]),
+                                label: Text(t.name ?? ''),
+                                onSelected: (b) {}))
+                            .toList(),
+                      )
+                    : Container()
               ],
             ),
           ),
@@ -140,6 +145,10 @@ class PokeDetail extends StatelessWidget {
         backgroundColor: Colors.cyan,
         title: Text(pokemon.name ?? ''),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Modular.to.pop(),
+        ),
       ),
       body: bodyWidget(context),
     );
