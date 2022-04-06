@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   //api address to pokemon data
   Uri url = Uri.parse(
       "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json");
@@ -48,18 +47,50 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () => {
               if (pokeHub != null)
-                {Modular.to.pushNamed('/searchpage', arguments: pokeHub)} //go to search page
+                {Modular.to.pushNamed('/searchpage', arguments: pokeHub)}
+              //go to search page
             },
             icon: const Icon(Icons.search),
           ),
         ],
       ),
-      drawer: const Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.cyan,
+              ),
+              child: Text('Header'),
+            ),
+            ListTile(
+              title: Row(
+                children: const [
+                  Icon(
+                    Icons.login,
+                    size: 30,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Login',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              onTap: () {},
+            )
+          ],
+        ),
+      ),
       body: pokeHub == null //conditional rendering
           ? const Center(
               child: CircularProgressIndicator(), //is loading
             )
-          : GridView.count( //showing data from the api
+          : GridView.count(
+              //showing data from the api
               crossAxisCount: 2,
               children: pokeHub!.pokemon.map((poke) {
                 return InkWell(
