@@ -22,8 +22,10 @@ class _HomePageState extends State<HomePage> {
   //instance of login with google account
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
+  //instance of user logged
   User? currentUser;
 
+  //address of user's profile picture
   String profilePictureURL = '';
 
   @override
@@ -222,7 +224,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  onTap: () {},
+                  onTap: () => Modular.to.pushNamed('/favorites', arguments: currentUser),
               ),
               ListTile(
                 title: Row(

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:pokeapp/pages/favorites.dart';
 import 'package:pokeapp/pages/home_page.dart';
 import 'package:pokeapp/pages/pokemon_detail.dart';
 import 'package:pokeapp/pages/search_page.dart';
@@ -50,6 +51,10 @@ class AppModule extends Module {
         ChildRoute(
           '/searchpage',
           child: (context, args) => SearchPage(pokehub: args.data),
+        ),
+        ChildRoute(
+          '/favorites',
+          child: (context, args) => Favorites(user: args.data),
         )
       ];
 }
