@@ -1,10 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokeapp/pages/home_page.dart';
 import 'package:pokeapp/pages/pokemon_detail.dart';
 import 'package:pokeapp/pages/search_page.dart';
 
-void main() {
+void main() async{
 
   /* //before using Modular
   runApp(const MaterialApp(
@@ -13,6 +14,10 @@ void main() {
     home: HomePage(),
   ));
    */
+
+  //firebase initialization
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   return runApp(
     ModularApp(
