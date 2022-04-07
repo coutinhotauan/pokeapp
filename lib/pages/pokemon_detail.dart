@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:favorite_button/favorite_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +22,8 @@ class _PokeDetailState extends State<PokeDetail> {
   Pokemon? pokemon;
   User? user;
 
+  //flag to inform if this pokemon is in user favorite's list
+  bool isFavorite = false;
 
   @override
   void initState() {
@@ -28,6 +33,7 @@ class _PokeDetailState extends State<PokeDetail> {
     user = widget.args![1];
   }
 
+  //select color according to pokemon's attribute
   selectColor(String type) {
     switch (type) {
       case 'Grass':
@@ -65,6 +71,7 @@ class _PokeDetailState extends State<PokeDetail> {
     return Colors.transparent;
   }
 
+  //build body widget
   bodyWidget(context) {
     return Stack(
       children: [
@@ -157,6 +164,48 @@ class _PokeDetailState extends State<PokeDetail> {
     );
   }
 
+  /*
+  //check if this pokemon is on user favorite's list
+  Future<bool> checkFavorite() async{
+
+
+
+    //reference to user's collection on firestore
+    CollectionReference userCollection = FirebaseFirestore.instance.collection(user!.uid);
+
+    userCollection.doc().get()
+
+  }
+   */
+
+  //add pokemon in user favorite's list
+  Future<void> setFavorite() async{
+
+    //reference to user's collection on firestore
+    CollectionReference userCollection = FirebaseFirestore.instance.collection(user!.uid);
+
+    String pokemonData = pokemon!.id.toString();
+
+    userCollection
+        .add({'pokemon_id': pokemonData})
+        .then((value){
+          setState(() {
+            isFavorite = true;
+          });
+        })
+        .catchError((e){
+
+          //snackbar to be displayed
+          const snackBarError = SnackBar(
+            content: Text('Error setting favorite, try again later!'),
+            backgroundColor: Colors.cyan,
+          );
+
+          //display message
+          ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,8 +224,12 @@ class _PokeDetailState extends State<PokeDetail> {
             margin: const EdgeInsets.only(right: 15),
             child: FavoriteButton(
               iconSize: 45,
-              isFavorite: false,
-              valueChanged: () {},
+              isFavorite: isFavorite,
+              valueChanged: (_) async{
+                if(isFavorite == false){
+                  setFavorite();
+                }
+              },
             ),
           ) : Container()
         ],
