@@ -1,16 +1,21 @@
-# pokeapp
+# PokéApp
 
-A new Flutter project.
+Initial ideal from Pawann Kumaarr (<a href="https://www.youtube.com/watch?v=yeXJqZCiwTQ&t=291s&ab_channel=Codepur">link to reference</a>)
 
-## Getting Started
+This app simulates a PokéDex (a pokemon dictionary), where you can check all pokémons from 1ª generation.
 
-This project is a starting point for a Flutter application.
+##What's new?
 
-A few resources to get you started if this is your first Flutter project:
+Since the Pawann's version, my version for this app brings new features where you can search for a specific pokémon, created your account and store your favorite's pokémons.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- Search Page
+- Google account's login
+- Favorite's (working on)
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+##What I used to build?
+
+- http (Pawann used to fetch data from the Pokemon's API)
+- Firebase (for login and data storage)
+- Modular (for page routing)
+
+
