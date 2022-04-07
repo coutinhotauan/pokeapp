@@ -1,11 +1,32 @@
+import 'package:favorite_button/favorite_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokeapp/pokemon.dart';
 
-class PokeDetail extends StatelessWidget {
-  const PokeDetail({Key? key, required this.pokemon}) : super(key: key);
+class PokeDetail extends StatefulWidget {
 
-  final Pokemon pokemon;
+  final List? args;
+
+  const PokeDetail({Key? key, required this.args}) : super(key: key);
+
+  @override
+  State<PokeDetail> createState() => _PokeDetailState();
+}
+
+class _PokeDetailState extends State<PokeDetail> {
+
+  Pokemon? pokemon;
+  User? user;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    pokemon = widget.args![0];
+    user = widget.args![1];
+  }
 
   selectColor(String type) {
     switch (type) {
@@ -62,21 +83,21 @@ class PokeDetail extends StatelessWidget {
                   height: 70,
                 ),
                 Text(
-                  pokemon.name ?? '',
+                  pokemon!.name ?? '',
                   style: const TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text('Height: ${pokemon.height}'),
-                Text('Weight: ${pokemon.weight}'),
+                Text('Height: ${pokemon!.height}'),
+                Text('Weight: ${pokemon!.weight}'),
                 const Text(
                   'Types',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: pokemon.type!
+                  children: pokemon!.type!
                       .map((t) => FilterChip(
                           backgroundColor: selectColor(t),
                           label: Text(t),
@@ -89,25 +110,25 @@ class PokeDetail extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: pokemon.weaknesses!
+                  children: pokemon!.weaknesses!
                       .map((t) => FilterChip(
                           backgroundColor: selectColor(t),
                           label: Text(t),
                           onSelected: (b) {}))
                       .toList(),
                 ),
-                pokemon.nextEvolution != null
+                pokemon!.nextEvolution != null
                     ? const Text(
                         'Next Evolution',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       )
                     : const Text(''),
-                pokemon.nextEvolution != null
+                pokemon!.nextEvolution != null
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: pokemon.nextEvolution!
+                        children: pokemon!.nextEvolution!
                             .map((t) => FilterChip(
-                                backgroundColor: selectColor(pokemon.type![0]),
+                                backgroundColor: selectColor(pokemon!.type![0]),
                                 label: Text(t.name ?? ''),
                                 onSelected: (b) {}))
                             .toList(),
@@ -120,14 +141,14 @@ class PokeDetail extends StatelessWidget {
         Align(
           alignment: Alignment.topCenter,
           child: Hero(
-            tag: pokemon.id as Object,
+            tag: pokemon!.id as Object,
             child: Container(
               height: 200,
               width: 200,
               decoration: BoxDecoration(
                   image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(pokemon.img ?? ''),
+                image: NetworkImage(pokemon!.img ?? ''),
               )),
             ),
           ),
@@ -143,12 +164,22 @@ class PokeDetail extends StatelessWidget {
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.cyan,
-        title: Text(pokemon.name ?? ''),
+        title: Text(pokemon!.name ?? ''),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Modular.to.pop(),
         ),
+        actions: [
+          user != null ? Container(
+            margin: const EdgeInsets.only(right: 15),
+            child: FavoriteButton(
+              iconSize: 45,
+              isFavorite: false,
+              valueChanged: () {},
+            ),
+          ) : Container()
+        ],
       ),
       body: bodyWidget(context),
     );

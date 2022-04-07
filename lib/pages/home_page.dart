@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () => {
               if (pokeHub != null)
-                {Modular.to.pushNamed('/searchpage', arguments: pokeHub)}
+                {Modular.to.pushNamed('/searchpage', arguments: [pokeHub, currentUser])}
               //go to search page
             },
             icon: const Icon(Icons.search),
@@ -289,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                     */
 
                     //using Modular to navigate between pages
-                    Modular.to.pushNamed('/pokedetail', arguments: poke);
+                    Modular.to.pushNamed('/pokedetail', arguments: [poke, currentUser]);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),

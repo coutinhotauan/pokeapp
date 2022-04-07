@@ -46,7 +46,7 @@ class AppModule extends Module {
         ),
         ChildRoute(
           '/pokedetail',
-          child: (context, args) => PokeDetail(pokemon: args.data),
+          child: (context, args) => PokeDetail(args: args.data),
         ),
         ChildRoute(
           '/searchpage',

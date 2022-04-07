@@ -41,6 +41,7 @@ dependencies:
   firebase_storage: ^10.2.9
   firebase_auth: ^3.3.11
   firebase_core: ^1.13.1
+  favorite_button: ^0.0.4
 
 dev_dependencies:
   flutter_test:

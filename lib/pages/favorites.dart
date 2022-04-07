@@ -18,7 +18,7 @@ class _FavoritesState extends State<Favorites> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Modular.to.pushNamed('/'),
+          onPressed: () => Modular.to.pop(),
         ),
         title: const Text('Favorite page'),
       ),
