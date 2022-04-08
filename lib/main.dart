@@ -50,11 +50,11 @@ class AppModule extends Module {
         ),
         ChildRoute(
           '/searchpage',
-          child: (context, args) => SearchPage(pokehub: args.data),
+          child: (context, args) => SearchPage(args: args.data),
         ),
         ChildRoute(
           '/favorites',
-          child: (context, args) => Favorites(user: args.data),
+          child: (context, args) => Favorites(args: args.data),
         )
       ];
 }

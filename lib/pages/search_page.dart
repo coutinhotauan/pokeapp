@@ -1,18 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokeapp/pokemon.dart';
 
 class SearchPage extends StatefulWidget {
-  //pokemon data from home page
-  final PokeHub? pokehub;
 
-  const SearchPage({Key? key, this.pokehub}) : super(key: key);
+  final List args;
+
+  const SearchPage({Key? key, required this.args}) : super(key: key);
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
+
+  //pokemon data from home page
+  PokeHub? pokehub;
+
+  //pokemon data from home page
+  User? user;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    pokehub = widget.args[0];
+    user = widget.args[1];
+  }
+
   //controller for search bar
   TextEditingController searchController = TextEditingController();
 
@@ -27,8 +44,8 @@ class _SearchPageState extends State<SearchPage> {
     List<Pokemon> result = [];
 
     //verify that pokemon data received exists
-    if (widget.pokehub != null && widget.pokehub?.pokemon != null) {
-      allPokemons = widget.pokehub!.pokemon;
+    if (pokehub != null && pokehub?.pokemon != null) {
+      allPokemons = pokehub!.pokemon;
 
       //doesn't have null safety (or ... ??)
       //result = allPokemons.where((pokemon) => pokemon.name!.contains(keyword)).toList();
@@ -38,7 +55,7 @@ class _SearchPageState extends State<SearchPage> {
         //check if property 'name' isn't null
         if (pokemon.name != null) {
           //adds if pokemon's name contains the search's keyword
-          if (pokemon.name!.contains(keyword)) {
+          if (pokemon.name!.toLowerCase().contains(keyword)) {
             result.add(pokemon);
           }
         }
@@ -110,7 +127,7 @@ class _SearchPageState extends State<SearchPage> {
                     children: pokemons.map((poke) {
                       return InkWell(
                         onTap: () => Modular.to
-                            .pushNamed('/pokedetail', arguments: poke),
+                            .pushNamed('/pokedetail', arguments: [poke, user]),
                         //go to pokemon's detail page
                         child: Padding(
                           padding: const EdgeInsets.all(2),

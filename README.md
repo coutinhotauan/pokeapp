@@ -10,7 +10,7 @@ Since the Pawann's version, my version for this app brings new features where yo
 
 - Search Page
 - Google account's login
-- Favorite's (working on)
+- Favorite's 
 
 ## What I used to build?
 

@@ -35,6 +35,9 @@ class _HomePageState extends State<HomePage> {
     //fetch for the api at the start of the page
     fetchData();
 
+    //loads profile picture if logged
+    profilePicture();
+
     //observe user's state (logged or not)
     FirebaseAuth.instance.authStateChanges().listen((user) {
       setState(() {
@@ -224,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  onTap: () => Modular.to.pushNamed('/favorites', arguments: currentUser),
+                  onTap: () => Modular.to.pushNamed('/favorites', arguments: [pokeHub, currentUser]),
               ),
               ListTile(
                 title: Row(

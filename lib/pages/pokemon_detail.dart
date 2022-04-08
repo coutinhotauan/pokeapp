@@ -1,14 +1,12 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:favorite_button/favorite_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:pokeapp/pokemon.dart';
 
 class PokeDetail extends StatefulWidget {
-
   final List? args;
 
   const PokeDetail({Key? key, required this.args}) : super(key: key);
@@ -18,9 +16,10 @@ class PokeDetail extends StatefulWidget {
 }
 
 class _PokeDetailState extends State<PokeDetail> {
-
   Pokemon? pokemon;
   User? user;
+  bool fromFavorites = false;
+  PokeHub? pokehub;
 
   //flag to inform if this pokemon is in user favorite's list
   bool isFavorite = false;
@@ -31,6 +30,11 @@ class _PokeDetailState extends State<PokeDetail> {
 
     pokemon = widget.args![0];
     user = widget.args![1];
+
+    if (widget.args!.length > 2) {
+      fromFavorites = true;
+      pokehub = widget.args![2];
+    }
   }
 
   //select color according to pokemon's attribute
@@ -164,46 +168,88 @@ class _PokeDetailState extends State<PokeDetail> {
     );
   }
 
-  /*
   //check if this pokemon is on user favorite's list
-  Future<bool> checkFavorite() async{
-
-
+  Future<int> checkFavorite() async {
+    //pokemon data to check in the firestore
+    String pokemonData = pokemon!.id.toString();
 
     //reference to user's collection on firestore
-    CollectionReference userCollection = FirebaseFirestore.instance.collection(user!.uid);
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection(user!.uid);
 
-    userCollection.doc().get()
+    //makes a query to the firestore
+    var answer =
+        await userCollection.where('pokemon_id', isEqualTo: pokemonData).get();
 
+    //if this pokemon is on list, answer.size will be 1, otherwise, 0
+    return answer.size;
   }
-   */
 
   //add pokemon in user favorite's list
-  Future<void> setFavorite() async{
-
+  Future<void> setFavorite() async {
     //reference to user's collection on firestore
-    CollectionReference userCollection = FirebaseFirestore.instance.collection(user!.uid);
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection(user!.uid);
 
     String pokemonData = pokemon!.id.toString();
 
-    userCollection
-        .add({'pokemon_id': pokemonData})
-        .then((value){
-          setState(() {
-            isFavorite = true;
-          });
-        })
-        .catchError((e){
+    userCollection.add({'pokemon_id': pokemonData}).then((value) {
+      setState(() {
+        isFavorite = true; //favorite button will display true
+      });
+    }).catchError((e) {
+      //snackbar to be displayed
+      const snackBarError = SnackBar(
+        content: Text('Error setting favorite, try again later!'),
+        backgroundColor: Colors.cyan,
+      );
 
-          //snackbar to be displayed
-          const snackBarError = SnackBar(
-            content: Text('Error setting favorite, try again later!'),
-            backgroundColor: Colors.cyan,
-          );
+      //display message
+      ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+    });
+  }
 
-          //display message
-          ScaffoldMessenger.of(context).showSnackBar(snackBarError);
-        });
+  //delete from pokemon from user favorite's list
+  Future<void> deleteFavorite() async {
+    //pokemon data to check in the firestore
+    String pokemonData = pokemon!.id.toString();
+
+    //reference to user's collection on firestore
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection(user!.uid);
+
+    //makes a query to the firestore
+    var answer =
+        await userCollection.where('pokemon_id', isEqualTo: pokemonData).get();
+
+    //id of pokemon's doc
+    String docId = answer.docs[0].id;
+
+    //delete pokemon from favorite's list
+    await userCollection.doc(docId).delete().then((value) {
+      setState(() {
+        isFavorite = false; //favorite button will display false
+      });
+    }).catchError((e) {
+      //snackbar to be displayed
+      const snackBarError = SnackBar(
+        content: Text('Error deleting favorite, try again later!'),
+        backgroundColor: Colors.cyan,
+      );
+
+      //display message
+      ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+    });
+  }
+
+  //handles favorite's button action
+  Future<void> handleFavorite() async {
+    //if false, sets as favorite, otherwise, delete from favorite's list
+    if (isFavorite == false) {
+      setFavorite();
+    } else {
+      deleteFavorite();
+    }
   }
 
   @override
@@ -217,21 +263,43 @@ class _PokeDetailState extends State<PokeDetail> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Modular.to.pop(),
+          onPressed: fromFavorites
+              ? () =>
+                  Modular.to.pushNamed('/favorites', arguments: [pokehub, user])
+              : () => Modular.to.pop(),
         ),
         actions: [
-          user != null ? Container(
-            margin: const EdgeInsets.only(right: 15),
-            child: FavoriteButton(
-              iconSize: 45,
-              isFavorite: isFavorite,
-              valueChanged: (_) async{
-                if(isFavorite == false){
-                  setFavorite();
-                }
-              },
-            ),
-          ) : Container()
+          user != null
+              ? FutureBuilder(
+                  //build the favorite's button according to checkFavorite's function
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      //checks if the pokemon is on list
+                      if (snapshot.data != null && snapshot.data! as int > 0) {
+                        isFavorite = true;
+                      }
+
+                      return Container(
+                          //final widget of favorite's button
+                          margin: const EdgeInsets.only(right: 15),
+                          child: FavoriteButton(
+                            iconSize: 45,
+                            isFavorite: isFavorite,
+                            valueChanged: (_) async {
+                              handleFavorite();
+                            },
+                          ));
+                    }
+
+                    return const Center(
+                      //waiting state
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                  future:
+                      checkFavorite(), //checks if pokemon is in the favorite's list
+                )
+              : Container() //user is not logged
         ],
       ),
       body: bodyWidget(context),
