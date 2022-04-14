@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                     */
 
                     //using Modular to navigate between pages
-                    Modular.to.pushNamed('/pokedetail', arguments: [poke, currentUser]);
+                    Modular.to.pushNamed('/pokedetail', arguments: [poke, currentUser, pokeHub, false]);
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),

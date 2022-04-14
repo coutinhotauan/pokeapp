@@ -28,13 +28,11 @@ class _PokeDetailState extends State<PokeDetail> {
   void initState() {
     super.initState();
 
+    //set attributes on initialization
     pokemon = widget.args![0];
     user = widget.args![1];
-
-    if (widget.args!.length > 2) {
-      fromFavorites = true;
-      pokehub = widget.args![2];
-    }
+    pokehub = widget.args![2];
+    fromFavorites = widget.args![3];
   }
 
   //select color according to pokemon's attribute
@@ -73,6 +71,25 @@ class _PokeDetailState extends State<PokeDetail> {
     }
 
     return Colors.transparent;
+  }
+
+  //finds the pokemon's evolution according to "num" attribute
+  Pokemon? setNextEvolution(PokeHub? pokehub, String? numPoke){
+
+    Pokemon? pokeEvolution;
+
+    if(pokehub != null && numPoke != null) {
+
+      //looping over the list of pokemons
+      for (var element in pokehub.pokemon) {
+        if (element.num == numPoke) {
+          pokeEvolution = element;
+        }
+      }
+
+    }
+
+    return pokeEvolution;
   }
 
   //build body widget
@@ -141,7 +158,15 @@ class _PokeDetailState extends State<PokeDetail> {
                             .map((t) => FilterChip(
                                 backgroundColor: selectColor(pokemon!.type![0]),
                                 label: Text(t.name ?? ''),
-                                onSelected: (b) {}))
+                                onSelected: (b) {
+                                  //search for pokémon's evolution
+                                  Pokemon? pokeEvolution = setNextEvolution(pokehub, t.num);
+
+                                  //if finds it, go to pokemon's evolution page
+                                  if(pokeEvolution != null){
+                                    Modular.to.pushNamed('/pokedetail', arguments: [pokeEvolution, user, pokehub, false]);
+                                  }
+                                }))
                             .toList(),
                       )
                     : Container()

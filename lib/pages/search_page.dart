@@ -127,7 +127,7 @@ class _SearchPageState extends State<SearchPage> {
                     children: pokemons.map((poke) {
                       return InkWell(
                         onTap: () => Modular.to
-                            .pushNamed('/pokedetail', arguments: [poke, user]),
+                            .pushNamed('/pokedetail', arguments: [poke, user, pokehub, false]),
                         //go to pokemon's detail page
                         child: Padding(
                           padding: const EdgeInsets.all(2),

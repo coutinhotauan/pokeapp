@@ -72,7 +72,7 @@ class _FavoritesState extends State<Favorites> {
 
                 return InkWell(
                   onTap: () => Modular.to.pushNamed(
-                      '/pokedetail', arguments: [poke, user, pokehub]),
+                      '/pokedetail', arguments: [poke, user, pokehub, true]),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Hero(
