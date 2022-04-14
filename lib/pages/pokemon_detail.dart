@@ -35,8 +35,8 @@ class _PokeDetailState extends State<PokeDetail> {
     fromFavorites = widget.args![3];
   }
 
-  //select color according to pokemon's attribute
-  selectColor(String type) {
+  //select background color according to pokemon's attribute
+  selectCardBackgroundColor(String type) {
     switch (type) {
       case 'Grass':
         return Colors.green;
@@ -57,9 +57,9 @@ class _PokeDetailState extends State<PokeDetail> {
       case 'Ground':
         return Colors.brown;
       case 'Fighting':
-        return Colors.deepPurpleAccent;
+        return Colors.orangeAccent;
       case 'Psychic':
-        return Colors.lightGreenAccent;
+        return Colors.deepPurpleAccent;
       case 'Rock':
         return Colors.black12;
       case 'Ice':
@@ -68,25 +68,41 @@ class _PokeDetailState extends State<PokeDetail> {
         return Colors.white70;
       case 'Dragon':
         return Colors.amber;
+      case 'Fairy':
+        return Colors.pink;
+      default:
+        return Colors.transparent;
     }
+  }
 
-    return Colors.transparent;
+  //select text color according to pokemon's attribute
+  selectCardTextColor(String type) {
+    switch (type) {
+      case 'Grass':
+      case 'Poison':
+      case 'Fire':
+      case 'Water':
+      case 'Ground':
+      case 'Psychic':
+      case 'Dragon':
+      case 'Fairy':
+        return Colors.white;
+      default:
+        return Colors.black;
+    }
   }
 
   //finds the pokemon's evolution according to "num" attribute
-  Pokemon? setNextEvolution(PokeHub? pokehub, String? numPoke){
-
+  Pokemon? setNextEvolution(PokeHub? pokehub, String? numPoke) {
     Pokemon? pokeEvolution;
 
-    if(pokehub != null && numPoke != null) {
-
+    if (pokehub != null && numPoke != null) {
       //looping over the list of pokemons
       for (var element in pokehub.pokemon) {
         if (element.num == numPoke) {
           pokeEvolution = element;
         }
       }
-
     }
 
     return pokeEvolution;
@@ -127,8 +143,13 @@ class _PokeDetailState extends State<PokeDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon!.type!
                       .map((t) => FilterChip(
-                          backgroundColor: selectColor(t),
-                          label: Text(t),
+                          backgroundColor: selectCardBackgroundColor(t),
+                          label: Text(
+                            t,
+                            style: TextStyle(
+                              color: selectCardTextColor(t),
+                            ),
+                          ),
                           onSelected: (b) {}))
                       .toList(),
                 ),
@@ -140,8 +161,13 @@ class _PokeDetailState extends State<PokeDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: pokemon!.weaknesses!
                       .map((t) => FilterChip(
-                          backgroundColor: selectColor(t),
-                          label: Text(t),
+                          backgroundColor: selectCardBackgroundColor(t),
+                          label: Text(
+                            t,
+                            style: TextStyle(
+                              color: selectCardTextColor(t),
+                            ),
+                          ),
                           onSelected: (b) {}))
                       .toList(),
                 ),
@@ -156,15 +182,29 @@ class _PokeDetailState extends State<PokeDetail> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: pokemon!.nextEvolution!
                             .map((t) => FilterChip(
-                                backgroundColor: selectColor(pokemon!.type![0]),
-                                label: Text(t.name ?? ''),
+                                backgroundColor: selectCardBackgroundColor(
+                                    pokemon!.type![0]),
+                                label: Text(
+                                  t.name ?? '',
+                                  style: TextStyle(
+                                    color:
+                                        selectCardTextColor(pokemon!.type![0]),
+                                  ),
+                                ),
                                 onSelected: (b) {
                                   //search for pokémon's evolution
-                                  Pokemon? pokeEvolution = setNextEvolution(pokehub, t.num);
+                                  Pokemon? pokeEvolution =
+                                      setNextEvolution(pokehub, t.num);
 
                                   //if finds it, go to pokemon's evolution page
-                                  if(pokeEvolution != null){
-                                    Modular.to.pushNamed('/pokedetail', arguments: [pokeEvolution, user, pokehub, false]);
+                                  if (pokeEvolution != null) {
+                                    Modular.to.pushNamed('/pokedetail',
+                                        arguments: [
+                                          pokeEvolution,
+                                          user,
+                                          pokehub,
+                                          false
+                                        ]);
                                   }
                                 }))
                             .toList(),
