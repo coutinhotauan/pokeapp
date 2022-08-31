@@ -10,12 +10,13 @@ Since the Pawann's version, my version for this app brings new features where yo
 
 - Search Page
 - Google account's login
-- Favorite's 
+- Favorite's
+- Firebase Cloud Messaging (Push Notification)
 
 ## What I used to build?
 
 - http (Pawann used to fetch data from the Pokemon's API)
-- Firebase (for login and data storage)
+- Firebase (for login, data storage and push notification)
 - Modular (for page routing)
 
 

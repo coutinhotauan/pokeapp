@@ -1,7 +1,8 @@
 class PokeHub {
   List<Pokemon> pokemon = [];
+  bool? error = false;
 
-  PokeHub({required this.pokemon});
+  PokeHub({required this.pokemon, this.error});
 
   PokeHub.fromJson(Map<String, dynamic> json) {
     if (json['pokemon'] != null) {

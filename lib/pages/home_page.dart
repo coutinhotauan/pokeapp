@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:pokeapp/pokemon.dart';
+import 'package:pokeapp/models/pokemon.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   //api address to pokemon data
   Uri url = Uri.parse(
       "https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json");
@@ -51,50 +50,65 @@ class _HomePageState extends State<HomePage> {
 
   //function to fetch date from the api
   fetchData() async {
-    dynamic response = await http.get(url);
-    dynamic decodedJson = jsonDecode(response.body);
+    try {
+      http.Response response = await http.get(url).timeout(
+            const Duration(
+              seconds: 10,
+            ),
+          );
 
-    setState(() {
-      pokeHub = PokeHub.fromJson(decodedJson); //stores data retrieved
-    });
+      if (response.statusCode == 200) {
+        dynamic decodedJson = jsonDecode(response.body);
+        setState(() {
+          pokeHub = PokeHub.fromJson(decodedJson); //stores data retrieved
+        });
+      } else {
+        setState(() {
+          pokeHub = PokeHub(pokemon: [], error: true); //set error
+        });
+        throw Exception('API ERROR: error during data retrive');
+      }
+    } catch (e) {
+      setState(() {
+        pokeHub = PokeHub(pokemon: [], error: true); //set error
+      });
+      debugPrint('$e');
+    }
   }
 
   //do user's login
-  Future<User?> getUser() async{
-
-    if(currentUser != null){
+  Future<User?> getUser() async {
+    if (currentUser != null) {
       return currentUser;
     }
 
-    try{
-
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken,
       );
 
-      final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential authResult =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       final User? user = authResult.user;
 
       return user;
-
-    }catch(e){
+    } catch (e) {
       return null;
     }
-
   }
 
   //handles login result
-  void login() async{
-
+  void login() async {
     //awaits for login result
     final User? user = await getUser();
 
     //error during login
-    if(user == null){
-
+    if (user == null) {
       //snackbar to be displayed
       const snackBarError = SnackBar(
         content: Text('Error during login, try again later!'),
@@ -103,14 +117,13 @@ class _HomePageState extends State<HomePage> {
 
       //display snackbarError
       ScaffoldMessenger.of(context).showSnackBar(snackBarError);
-    }else{
+    } else {
       profilePicture();
     }
-
   }
 
   //does logout
-  void logout(){
+  void logout() {
     FirebaseAuth.instance.signOut();
     googleSignIn.signOut();
 
@@ -124,21 +137,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   //sets profile picture URL from the user who has logged
-  void profilePicture(){
-
+  void profilePicture() {
     String photoURL = '';
     String? user = FirebaseAuth.instance.currentUser?.photoURL;
 
-    if(user != null){
+    if (user != null) {
       profilePictureURL = user;
-    }else{
+    } else {
       profilePictureURL = photoURL;
     }
-
   }
 
   //if the user isn't logged, this drawer will be shown
-  drawerNotLogged(){
+  drawerNotLogged() {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -155,37 +166,35 @@ class _HomePageState extends State<HomePage> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         fit: BoxFit.fill,
-                        image: AssetImage('assets/images/user-image.png')
-                    )
-                ),
+                        image: AssetImage('assets/images/user-image.png'))),
               ),
             ),
           ),
           ListTile(
-            title: Row(
-              children: const [
-                Icon(
-                  Icons.login,
-                  size: 30,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Login',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            onTap: () => login() //user's login if button pressed,
-          )
+              title: Row(
+                children: const [
+                  Icon(
+                    Icons.login,
+                    size: 30,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Login',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              onTap: () => login() //user's login if button pressed,
+              )
         ],
       ),
     );
   }
 
   //if the user is logged, this drawer will be shown
-  drawerLogged(){
+  drawerLogged() {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -202,9 +211,7 @@ class _HomePageState extends State<HomePage> {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                         fit: BoxFit.fill,
-                        image: NetworkImage(profilePictureURL)
-                    )
-                ),
+                        image: NetworkImage(profilePictureURL))),
               ),
             ),
           ),
@@ -212,22 +219,23 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ListTile(
-                  title: Row(
-                    children: const [
-                      Icon(
-                        Icons.favorite,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Favorites',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  onTap: () => Modular.to.pushNamed('/favorites', arguments: [pokeHub, currentUser]),
+                title: Row(
+                  children: const [
+                    Icon(
+                      Icons.favorite,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Favorites',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                onTap: () => Modular.to
+                    .pushNamed('/favorites', arguments: [pokeHub, currentUser]),
               ),
               ListTile(
                 title: Row(
@@ -263,11 +271,16 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: () => {
-              if (pokeHub != null)
-                {Modular.to.pushNamed('/searchpage', arguments: [pokeHub, currentUser])}
+              if (pokeHub != null && pokeHub?.error != true)
+                {
+                  Modular.to.pushNamed('/searchpage',
+                      arguments: [pokeHub, currentUser])
+                }
               //go to search page
             },
-            icon: const Icon(Icons.search),
+            icon: pokeHub != null && pokeHub?.error != true
+                ? const Icon(Icons.search)
+                : Container(),
           ),
         ],
       ),
@@ -276,13 +289,24 @@ class _HomePageState extends State<HomePage> {
           ? const Center(
               child: CircularProgressIndicator(), //is loading
             )
-          : GridView.count(
-              //showing data from the api
-              crossAxisCount: 2,
-              children: pokeHub!.pokemon.map((poke) {
-                return InkWell(
-                  onTap: () {
-                    /* FORMER IDEA (using Navigator)
+          : pokeHub!.error!
+              ? const Center(
+                  child: Text(
+                    "Service unavailable\nTry again later :/",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                )
+              : GridView.count(
+                  //showing data from the api
+                  crossAxisCount: 2,
+                  children: pokeHub!.pokemon.map((poke) {
+                    return InkWell(
+                      onTap: () {
+                        /* FORMER IDEA (using Navigator)
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -291,42 +315,43 @@ class _HomePageState extends State<HomePage> {
                       );
                     */
 
-                    //using Modular to navigate between pages
-                    Modular.to.pushNamed('/pokedetail', arguments: [poke, currentUser, pokeHub, false]);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Hero(
-                      tag: poke.id as Object,
-                      child: Card(
-                        elevation: 3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(poke.img ?? ''),
+                        //using Modular to navigate between pages
+                        Modular.to.pushNamed('/pokedetail',
+                            arguments: [poke, currentUser, pokeHub, false]);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Hero(
+                          tag: poke.id as Object,
+                          child: Card(
+                            elevation: 3,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(poke.img ?? ''),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Text(
+                                  poke.name ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              poke.name ?? '',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+                    );
+                  }).toList(),
+                ),
     );
   }
 }

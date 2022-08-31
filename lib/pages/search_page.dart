@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:pokeapp/pokemon.dart';
+import 'package:pokeapp/models/pokemon.dart';
 
 class SearchPage extends StatefulWidget {
-
   final List args;
 
   const SearchPage({Key? key, required this.args}) : super(key: key);
@@ -14,13 +13,11 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-
   //pokemon data from home page
   PokeHub? pokehub;
 
   //pokemon data from home page
   User? user;
-
 
   @override
   void initState() {
@@ -79,7 +76,7 @@ class _SearchPageState extends State<SearchPage> {
           backgroundColor: Colors.cyan,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Modular.to.pop(),  //go to previous page
+            onPressed: () => Modular.to.pop(), //go to previous page
           ),
           title: Container(
             width: double.infinity,
@@ -113,7 +110,8 @@ class _SearchPageState extends State<SearchPage> {
         body: isInitial == true //conditional rendering
             ? Container()
             : (pokemons.isEmpty
-                ? const Center( //if the search returns no results
+                ? const Center(
+                    //if the search returns no results
                     child: Text(
                       'No pokemons found :/',
                       style: TextStyle(
@@ -122,12 +120,13 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                     ),
                   )
-                : GridView.count( //results of the search
+                : GridView.count(
+                    //results of the search
                     crossAxisCount: 2,
                     children: pokemons.map((poke) {
                       return InkWell(
-                        onTap: () => Modular.to
-                            .pushNamed('/pokedetail', arguments: [poke, user, pokehub, false]),
+                        onTap: () => Modular.to.pushNamed('/pokedetail',
+                            arguments: [poke, user, pokehub, false]),
                         //go to pokemon's detail page
                         child: Padding(
                           padding: const EdgeInsets.all(2),

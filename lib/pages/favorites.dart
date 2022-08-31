@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../pokemon.dart';
+import '../models/pokemon.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({Key? key, required this.args}) : super(key: key);
@@ -42,7 +42,8 @@ class _FavoritesState extends State<Favorites> {
         backgroundColor: Colors.cyan,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Modular.to.pushNamed('/', arguments: [pokehub, user]),
+          onPressed: () =>
+              Modular.to.pushNamed('/', arguments: [pokehub, user]),
         ),
         title: const Text('Favorites'),
       ),
@@ -60,19 +61,18 @@ class _FavoritesState extends State<Favorites> {
 
             return GridView.count(
               crossAxisCount: 2,
-              children: favorites.map((pokeId){
-
+              children: favorites.map((pokeId) {
                 Pokemon? poke;
 
-                for(Pokemon ePokemon in pokehub!.pokemon){
-                  if(ePokemon.id.toString() == pokeId['pokemon_id']){
+                for (Pokemon ePokemon in pokehub!.pokemon) {
+                  if (ePokemon.id.toString() == pokeId['pokemon_id']) {
                     poke = ePokemon;
                   }
                 }
 
                 return InkWell(
-                  onTap: () => Modular.to.pushNamed(
-                      '/pokedetail', arguments: [poke, user, pokehub, true]),
+                  onTap: () => Modular.to.pushNamed('/pokedetail',
+                      arguments: [poke, user, pokehub, true]),
                   child: Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: Hero(
