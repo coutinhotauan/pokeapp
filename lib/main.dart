@@ -5,20 +5,22 @@ import 'package:pokeapp/pages/favorites.dart';
 import 'package:pokeapp/pages/home_page.dart';
 import 'package:pokeapp/pages/pokemon_detail.dart';
 import 'package:pokeapp/pages/search_page.dart';
+import 'package:pokeapp/services/firebase_messaging_service.dart';
 
-void main() async{
+FirebaseMessagingService pushNotification = FirebaseMessagingService();
 
-  /* //before using Modular
-  runApp(const MaterialApp(
-    title: 'Poke App',
-    debugShowCheckedModeBanner: false,
-    home: HomePage(),
-  ));
-   */
-
+void main() async {
   //firebase initialization
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  //push notification
+  WidgetsFlutterBinding.ensureInitialized();
+  pushNotification.setFirebaseForegroundNotifications();
+  pushNotification.getToken();
+  pushNotification.onMessage();
+  pushNotification.onMessageOpenedApp();
+  onBackgroundMessage();
 
   return runApp(
     ModularApp(

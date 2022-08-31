@@ -14,9 +14,7 @@ class PokeHub {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (pokemon != null) {
-      data['pokemon'] = pokemon.map((v) => v.toJson()).toList();
-    }
+    data['pokemon'] = pokemon.map((v) => v.toJson()).toList();
     return data;
   }
 }
@@ -41,21 +39,21 @@ class Pokemon {
 
   Pokemon(
       {this.id,
-        this.num,
-        this.name,
-        this.img,
-        this.type,
-        this.height,
-        this.weight,
-        this.candy,
-        this.candyCount,
-        this.egg,
-        this.spawnChance,
-        this.avgSpawns,
-        this.spawnTime,
-        this.multipliers,
-        this.weaknesses,
-        this.nextEvolution});
+      this.num,
+      this.name,
+      this.img,
+      this.type,
+      this.height,
+      this.weight,
+      this.candy,
+      this.candyCount,
+      this.egg,
+      this.spawnChance,
+      this.avgSpawns,
+      this.spawnTime,
+      this.multipliers,
+      this.weaknesses,
+      this.nextEvolution});
 
   Pokemon.fromJson(Map<String, dynamic> json) {
     id = json['id'];
